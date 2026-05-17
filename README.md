@@ -1,99 +1,30 @@
-# 🤖 Multimodal AI Customer Support Agent
+# Multimodal Customer Support Agent
 
-An intelligent customer support system that processes **both product images and complaint text simultaneously** using GPT-4V — a true multimodal AI application.
+> Production customer support agent that reads images — GPT-4V + Redis caching + full Docker deployment.
 
-🔴 **Live Demo**: [huggingface.co/spaces/nitz0219/multimodal-customer-support-agent](https://huggingface.co/spaces/nitz0219/multimodal-customer-support-agent)
+## Problem Statement
+Most AI support bots are text-only, forcing customers to describe visual problems in words — a broken product, a damaged package, a UI bug screenshot. A multimodal agent that accepts images alongside text handles real-world support tickets as they actually arrive.
 
----
+## Architecture
+FastAPI receives support tickets as multimodal input (text + optional image). Images are base64-encoded and passed to GPT-4V, which analyzes visual context alongside the text query. Redis caches responses for repeated issue patterns (e.g., identical error screenshots). SQLite logs all interactions for audit and analytics. Gradio provides a drag-and-drop chat interface. Docker containerizes the full stack for one-command deployment.
 
-## 🧠 What It Does
+## Tech Stack
+`Python` · `GPT-4V (OpenAI)` · `FastAPI` · `Redis` · `SQLite` · `Gradio` · `Docker` · `HuggingFace Spaces`
 
-Upload a photo of a damaged/wrong product + describe your complaint in text. The AI reads **both inputs together** and generates an intelligent resolution — just like a human support agent would.
+## Key Results
+- Accepts text + image tickets simultaneously
+- Redis cache reduces API costs on repeated queries
+- Full session logging to SQLite
+- Deployed on HuggingFace Spaces
 
----
+## Live Demo
+🔗 [huggingface.co/spaces/nitz0219/multimodal-customer-support-agent](https://huggingface.co/spaces/nitz0219/multimodal-customer-support-agent)
 
-## 🏗️ Architecture
-
-```
-User Input (Image + Text)
-        ↓
-   Gradio Frontend
-        ↓
-   FastAPI Backend
-        ↓
-  Redis Cache Check
-  ┌────────────────┐
-  │ Cache HIT?     │ → Return instantly (free + fast)
-  │ Cache MISS?    │ → Call GPT-4V
-  └────────────────┘
-        ↓
-   GPT-4V Analysis
-   (Image + Text → Response)
-        ↓
-  Save to Redis Cache
-        ↓
-  Save to SQLite Database
-        ↓
-  Return Response to User
-```
-
----
-
-## ⚙️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| AI Model | OpenAI GPT-4V (multimodal) |
-| Frontend | Gradio |
-| Backend | FastAPI |
-| Caching | Redis |
-| Database | SQLite |
-| Deployment | Docker + Hugging Face Spaces |
-
----
-
-## 🚀 System Design Features
-
-- **Load Balancing** — handles multiple concurrent users
-- **Redis Caching** — same complaint type returns instantly (1 hour TTL)
-- **SQLite Database** — every complaint + response saved permanently
-- **Docker** — fully containerized for production deployment
-
----
-
-## 📦 Installation
-
+## How to Run Locally
 ```bash
 git clone https://github.com/niteshnankani-svg/multimodal-customer-support-agent
 cd multimodal-customer-support-agent
-pip install -r requirements.txt
+cp .env.example .env          # add OPENAI_API_KEY
+docker-compose up --build
+# Open http://localhost:7860
 ```
-
-Create `.env` file:
-```
-OPENAI_API_KEY=your_key_here
-REDIS_HOST=localhost
-REDIS_PORT=6379
-```
-
-Run:
-```bash
-docker-compose up
-python frontend/gradio_app.py
-```
-
----
-
-## 🎯 Use Cases
-
-- Ecommerce customer support (Flipkart, Amazon, Meesho)
-- Product quality inspection
-- Insurance claim processing
-- Manufacturing defect reporting
-
----
-
-## 👨‍💻 Author
-
-**Nitesh Nankani** — AI/ML Engineer  
-[HuggingFace](https://huggingface.co/nitz0219) | [GitHub](https://github.com/niteshnankani-svg) | [LinkedIn](https://linkedin.com/in/niteshnankani)
